@@ -1,5 +1,7 @@
 package pt.unl.fct.srsc.Model;
 
+import pt.unl.fct.srsc.Utils.JSON;
+
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -71,6 +73,6 @@ public class Message {
 
     @Override
     public String toString() {
-        return super.toString();
+        return JSON.encode(this);
     }
 }
