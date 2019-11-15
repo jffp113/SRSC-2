@@ -1,5 +1,7 @@
 package pt.unl.fct.srsc.Model;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,7 +18,7 @@ public class User {
      * Unique identifier
      * Suggested to be digest of user public key
      */
-   private String uudi;
+   private String uid;
 
     /**
      * User message box
@@ -37,14 +39,14 @@ public class User {
     public User() {
 
     }
-   public User(String uudi) {
-       this.uudi = uudi;
-       this.mbox = uudi + "mbox";
-       this.rbox = uudi + "rbox";
+   public User(String uid) {
+       this.uid = uid;
+       this.mbox = uid + "mbox";
+       this.rbox = uid + "rbox";
    }
 
    @Override
    public String toString() {
-       return "User{" + uudi + "}";
+       return "User{" + uid + "}";
    }
 }
