@@ -1,8 +1,10 @@
 package pt.unl.fct.srsc.Controller.Message;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import pt.unl.fct.srsc.Model.Responses.Response;
 
 public interface MessageBoxController {
 
@@ -16,7 +18,7 @@ public interface MessageBoxController {
             value = "/new/{id}",
             method = RequestMethod.GET,
             produces = "application/json")
-    String listUserNewMessages(@PathVariable( "id" ) String id);
+    ResponseEntity<Response> listUserNewMessages(@PathVariable( "id" ) String id);
 
     /**
      * Sent by a client in order to list all
@@ -28,7 +30,7 @@ public interface MessageBoxController {
             value = "/all/{id}",
             method = RequestMethod.GET,
             produces = "application/json")
-    String listAllUserMessages(@PathVariable( "id" ) String id);
+    ResponseEntity<Response> listAllUserMessages(@PathVariable( "id" ) String id);
 
     /**
      * Sent by a client in order to send
@@ -41,7 +43,7 @@ public interface MessageBoxController {
             method = RequestMethod.GET,
             consumes = "application/json",
             produces = "application/json")
-    String sendMessageToUser(@PathVariable( "sourceid" ) String id);
+    ResponseEntity<Response> sendMessageToUser(@PathVariable( "sourceid" ) String id);
 
     /**
      * Sent by a client in order to receive
@@ -54,7 +56,7 @@ public interface MessageBoxController {
             method = RequestMethod.GET,
             consumes = "application/json",
             produces = "application/json")
-    String receiveMessage(@PathVariable( "id" ) String id,
+    ResponseEntity<Response> receiveMessage(@PathVariable( "id" ) String id,
                              @PathVariable( "mid" ) String messageId);
 
     /**
@@ -69,7 +71,7 @@ public interface MessageBoxController {
             method = RequestMethod.GET,
             consumes = "application/json",
             produces = "application/json")
-    String receiptMessage(@PathVariable( "id" ) String id,
+    ResponseEntity<Response> receiptMessage(@PathVariable( "id" ) String id,
                           @PathVariable( "mid" ) String messageId);
 
     /**
@@ -84,7 +86,7 @@ public interface MessageBoxController {
             method = RequestMethod.GET,
             consumes = "application/json",
             produces = "application/json")
-    String messageStatus(@PathVariable( "id" ) String id,
+    ResponseEntity<Response> messageStatus(@PathVariable( "id" ) String id,
                           @PathVariable( "mid" ) String messageId);
 
 }

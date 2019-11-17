@@ -1,7 +1,5 @@
 package pt.unl.fct.srsc.Model;
 
-import pt.unl.fct.srsc.Utils.JSON;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,7 +16,7 @@ public class User {
      * Unique identifier
      * Suggested to be digest of user public key
      */
-    private String uid;
+    private String uuid;
 
     /**
      * User message box
@@ -38,10 +36,10 @@ public class User {
 
     public User() {}
 
-    public User(String uid) {
-        this.uid = uid;
-        this.mbox = uid + "mbox";
-        this.rbox = uid + "rbox";
+    public User(String uuid) {
+        this.uuid = uuid;
+        this.mbox = uuid + "mbox";
+        this.rbox = uuid + "rbox";
     }
 
     public Long getId() {
@@ -52,12 +50,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUid() {
-        return uid;
+    public String getUuid() {
+        return uuid;
     }
 
     public void setUid(String uid) {
-        this.uid = uid;
+        this.uuid = uid;
     }
 
     public String getMbox() {
@@ -82,10 +80,5 @@ public class User {
 
     public void setSecdata(String secdata) {
         this.secdata = secdata;
-    }
-
-    @Override
-    public String toString() {
-        return JSON.encode(this);
     }
 }

@@ -1,6 +1,5 @@
 package pt.unl.fct.srsc.Model;
 
-import pt.unl.fct.srsc.Utils.JSON;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -71,8 +70,4 @@ public class Message {
         wasRead = true;
     }
 
-    @Override
-    public String toString() {
-        return JSON.encode(this);
-    }
 }
