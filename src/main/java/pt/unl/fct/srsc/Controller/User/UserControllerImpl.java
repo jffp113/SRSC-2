@@ -22,12 +22,7 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public Result<Long> createUser(User user) {
-
-        String userUuid = user.getUuid();
-        if(isNullValue(userUuid) || isNullValue(user.getSecdata()))
-            return error(Result.ErrorCode.INTERNAL_ERROR);
-
-        return ok(userRepository.save(user).getId());
+        return error(NOT_IMPLEMENTED);        //TODO
     }
 
     @Override

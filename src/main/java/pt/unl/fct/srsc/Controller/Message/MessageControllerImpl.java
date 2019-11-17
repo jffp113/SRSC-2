@@ -3,6 +3,7 @@ package pt.unl.fct.srsc.Controller.Message;
 import org.springframework.web.bind.annotation.RestController;
 import pt.unl.fct.srsc.Model.Message;
 import pt.unl.fct.srsc.Repository.MBoxRepository;
+import pt.unl.fct.srsc.Repository.RBoxRepository;
 import pt.unl.fct.srsc.Results.Result;
 
 import java.util.List;
@@ -13,11 +14,14 @@ import static pt.unl.fct.srsc.Results.Result.error;
 @RestController
 public class MessageControllerImpl implements MessageController {
 
-    private final MBoxRepository messageRepository;
+    private final MBoxRepository mBoxRepository;
+    private final RBoxRepository rBoxRepository;
 
-    public MessageControllerImpl(MBoxRepository messageRepository){
-        this.messageRepository = messageRepository;
+    public MessageControllerImpl(MBoxRepository mBoxRepository, RBoxRepository rBoxRepository){
+        this.mBoxRepository = mBoxRepository;
+        this.rBoxRepository = rBoxRepository;
     }
+
 
     @Override
     public Result<String> listNewMessages(String userId) {
