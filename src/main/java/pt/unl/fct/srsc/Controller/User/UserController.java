@@ -1,12 +1,10 @@
 package pt.unl.fct.srsc.Controller.User;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.unl.fct.srsc.Model.Responses.CreateResponse;
 import pt.unl.fct.srsc.Model.Responses.Response;
+import pt.unl.fct.srsc.Model.User;
 
 @RestController
 public interface UserController {
@@ -14,14 +12,14 @@ public interface UserController {
     /**
      * Invocation used to create a
      * message box for the user in the server
-     * @param id
+     * @param user
      * @return userId
      */
     @RequestMapping(
-            value = "/create/{id}",
+            value = "/create",
             method = RequestMethod.POST,
             produces = "application/json")
-    ResponseEntity<CreateResponse>  createUser(@PathVariable( "id" ) String id);
+    ResponseEntity<CreateResponse>  createUser(@RequestBody User user);
 
 
     /**

@@ -40,6 +40,11 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.8.1</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -54,7 +59,7 @@
         <configuration>
           <schemaVersion>V2</schemaVersion>
           <resourceGroup>SRSC</resourceGroup>
-          <appName>SRSCWebApp2</appName>
+          <appName>SRSCWebApp</appName>
           <pricingTier>F1</pricingTier>
           <region>westeurope</region>
           <subscriptionId>f45ea053-8b8a-411b-808b-bbfa2e1c3d07</subscriptionId>

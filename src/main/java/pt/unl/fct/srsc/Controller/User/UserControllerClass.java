@@ -20,16 +20,18 @@ public class UserControllerClass implements UserController {
     private UserRepository userRepository;
 
     @Override
-    public ResponseEntity<CreateResponse> createUser(String uuid) {
-        LOG.info("Creating user with uudi %s",uuid);
+    public ResponseEntity<CreateResponse> createUser(User user) {
+        LOG.info(String.format("Creating user with uudi %s",user.getUuid()));
 
-        if(alreadyExists(uuid)){
-            LOG.info("User with uudi=%s already exists",uuid);
-            throw new ResourceAlreadyExistsException("User with Id already Exists");
+        if(alreadyExists(user.getUuid())){
+            LOG.info(String.format("User with uudi=%s already exists",user.getUuid()));
+            throw new ResourceAlreadyExistsException("User already exist with uudi: " + user.getUuid());
         }
-        userRepository.save(new User(uuid));
+        userRepository.save(user);
 
-       return CreateResponse.get(uuid);
+        LOG.info("Created: "  + user.toString());
+
+       return CreateResponse.get(user.getUuid());
     }
 
     private boolean alreadyExists(String uudi){
