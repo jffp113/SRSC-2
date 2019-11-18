@@ -1,73 +1,69 @@
 package pt.unl.fct.srsc.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.text.DateFormat;
 import java.util.Date;
 
+@Entity
+@Data
+@Table(name="messages")
 public class Message {
 
-    private String from;
-    private String to;
-    private String message;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @NotNull
+    @Column(name="valueFrom")
+    private Long from;
+
+    @NotNull
+    @Column(name="valueTo")
+    private Long to;
+
+    @NotNull
+    private String messageFrom;
+
+    @NotNull
+    private String messageTo;
+
     private String sendDate;
     private String receivedDate;
-    private boolean wasRead;
 
-    public Message(String from, String to, String message) {
-        this.from = from;
-        this.to = to;
-        this.message = message;
-        this.sendDate = DateFormat.getDateInstance().format(new Date());
-        this.receivedDate = "";
-        this.wasRead = false;
+    private String receiveSignature;
+
+    public Message(){
+
     }
 
-    public String getFrom() {
+    public Message(Long from, Long to, String messageFrom, String messageTo) {
+        this.from = from;
+        this.to = to;
+        this.messageFrom = messageFrom;
+        this.messageTo = messageTo;
+        this.sendDate = DateFormat.getDateInstance().format(new Date());
+        this.receivedDate = null;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getFrom() {
         return from;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
-    public String getTo() {
+    public Long getTo() {
         return to;
     }
 
-    public void setTo(String to) {
-        this.to = to;
-    }
 
-    public String getMessage() {
-        return message;
+    public void setReceiveSignature(String receiveSignature) {
+        this.receiveSignature = receiveSignature;
     }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getSendDate() {
-        return sendDate;
-    }
-
-    public void setSendDate(String sendDate) {
-        this.sendDate = sendDate;
-    }
-
-    public String getReceivedDate() {
-        return receivedDate;
-    }
-
-    public void setReceivedDate(String receivedDate) {
-        this.receivedDate = receivedDate;
-    }
-
-    public boolean isWasRead() {
-        return wasRead;
-    }
-
-    public void read(){
-        wasRead = true;
-    }
-
 }

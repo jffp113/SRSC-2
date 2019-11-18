@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
-import lombok.NonNull;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 @Entity
