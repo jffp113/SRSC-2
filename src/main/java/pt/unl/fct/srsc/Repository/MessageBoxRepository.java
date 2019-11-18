@@ -14,6 +14,6 @@ public interface MessageBoxRepository extends JpaRepository<Message, Long> {
     List<Message> getAllByToAndReceiveSignatureNull(Long id);
     List<Message> getAllByTo(Long id);
     Message getMessageById(Long id);
-    Message getMessageByIdAndTo(Long message,String uuid);
-    Message getMessageByIdAndFrom(Long message,String uuid);
+    Message getMessageByIdAndTo(Long message,Long uid);
+    Message getMessageByIdAndFrom(Long message,Long uid);
 }

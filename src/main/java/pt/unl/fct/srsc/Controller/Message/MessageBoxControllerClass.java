@@ -23,6 +23,7 @@ public class MessageBoxControllerClass implements MessageBoxController {
     private UserRepository userRepository;
 
 
+    @Override
     public ResponseEntity<Result<List<Message>>> listUserNewMessages(Long id) {
         isUserInTheSystem(id);
         return ok(messageBoxRepository.getAllByToAndReceiveSignatureNull(id));
@@ -40,6 +41,7 @@ public class MessageBoxControllerClass implements MessageBoxController {
         isUserInTheSystem(message.getFrom());
         isUserInTheSystem(message.getTo());
         //TODO check SIGNATURE
+        message.setSendDate();
         messageBoxRepository.save(message);
 
         return ok(message.getId());
@@ -57,22 +59,23 @@ public class MessageBoxControllerClass implements MessageBoxController {
     }
 
     @Override
-    public void receiptMessage(Long id, String uuid,String signatureBase64) {
-        Message message = messageBoxRepository.getMessageByIdAndTo(id,uuid);
+    public void receiptMessage(Long id, Long uid,String signatureBase64) {
+        Message message = messageBoxRepository.getMessageByIdAndTo(id,uid);
 
         if(message == null){
             throw new ResourceNotFoundException("There's no message matching.");
         }
 
         message.setReceiveSignature(signatureBase64);
+        message.setReceivedDate();
         //TODO verify ?
 
         messageBoxRepository.save(message);
     }
 
     @Override
-    public ResponseEntity<Result<Message>> messageStatus(Long id, String uuid) {
-        Message message = messageBoxRepository.getMessageByIdAndTo(id,uuid);
+    public ResponseEntity<Result<Message>> messageStatus(Long id, Long uid) {
+        Message message = messageBoxRepository.getMessageByIdAndTo(id,uid);
 
         if(message == null){
             throw new ResourceNotFoundException("There's no message matching.");
@@ -83,6 +86,6 @@ public class MessageBoxControllerClass implements MessageBoxController {
 
     private void isUserInTheSystem(Long id) {
         if(!userRepository.existsById(id))
-            throw new ResourceNotFoundException(String.format("User with id %d does not exist."));
+            throw new ResourceNotFoundException(String.format("User with id %d does not exist.",id));
     }
 }

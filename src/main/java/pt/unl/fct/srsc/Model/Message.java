@@ -3,6 +3,7 @@ package pt.unl.fct.srsc.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -33,6 +34,7 @@ public class Message {
     private String messageTo;
 
     private String sendDate;
+
     private String receivedDate;
 
     private String receiveSignature;
@@ -46,7 +48,6 @@ public class Message {
         this.to = to;
         this.messageFrom = messageFrom;
         this.messageTo = messageTo;
-        this.sendDate = DateFormat.getDateInstance().format(new Date());
         this.receivedDate = null;
     }
 
@@ -62,6 +63,13 @@ public class Message {
         return to;
     }
 
+    public void setReceivedDate(){
+        this.receivedDate = DateFormat.getDateInstance().format(new Date());
+    }
+
+    public void setSendDate(){
+        this.sendDate = DateFormat.getDateInstance().format(new Date());
+    }
 
     public void setReceiveSignature(String receiveSignature) {
         this.receiveSignature = receiveSignature;

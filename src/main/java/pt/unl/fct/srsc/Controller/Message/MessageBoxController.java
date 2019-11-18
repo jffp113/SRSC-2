@@ -74,10 +74,9 @@ public interface MessageBoxController {
     @RequestMapping(
             value = "/receipt/{id}/{mid}",
             method = RequestMethod.PUT,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.TEXT_PLAIN_VALUE)
+            consumes = MediaType.TEXT_PLAIN_VALUE)
     void receiptMessage(@PathVariable( "id" ) Long id,
-                          @PathVariable( "mid" ) String uuid,
+                          @PathVariable( "mid" ) Long uid,
                                           @RequestBody String signatureBase64);
 
     /**
@@ -90,9 +89,8 @@ public interface MessageBoxController {
     @RequestMapping(
             value = "/status/{id}/{mid}",
             method = RequestMethod.GET,
-            consumes = "application/json",
             produces = "application/json")
     ResponseEntity<Result<Message>> messageStatus(@PathVariable( "id" ) Long id,
-                          @PathVariable( "mid" ) String uuid);
+                          @PathVariable( "mid" ) Long uid);
 
 }
