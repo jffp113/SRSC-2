@@ -1,4 +1,4 @@
-package pt.unl.fct.srsc.Model.Responses;
+package pt.unl.fct.srsc.Responses;
 
 public class OkResult<T> implements Result<T> {
 

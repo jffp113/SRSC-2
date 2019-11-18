@@ -1,7 +1,6 @@
 package pt.unl.fct.srsc.Model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -48,6 +47,10 @@ public class User {
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getSecdata() {
+        return secdata;
     }
 
     @Override

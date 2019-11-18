@@ -1,9 +1,7 @@
 package pt.unl.fct.srsc.Model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,12 +17,10 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
-    @Column(name="valueFrom")
+    @Column(name="valueFrom", nullable = false)
     private Long from;
 
-    @NotNull
-    @Column(name="valueTo")
+    @Column(name="valueTo", nullable = false)
     private Long to;
 
     @NotNull
@@ -39,9 +35,7 @@ public class Message {
 
     private String receiveSignature;
 
-    public Message(){
-
-    }
+    public Message(){ }
 
     public Message(Long from, Long to, String messageFrom, String messageTo) {
         this.from = from;
@@ -64,14 +58,18 @@ public class Message {
     }
 
     public void setReceivedDate(){
-        this.receivedDate = DateFormat.getDateInstance().format(new Date());
+        this.receivedDate = actualDate();
     }
 
     public void setSendDate(){
-        this.sendDate = DateFormat.getDateInstance().format(new Date());
+        this.sendDate = actualDate();
     }
 
     public void setReceiveSignature(String receiveSignature) {
         this.receiveSignature = receiveSignature;
+    }
+
+    private String actualDate(){
+        return DateFormat.getDateInstance().format(new Date());
     }
 }
