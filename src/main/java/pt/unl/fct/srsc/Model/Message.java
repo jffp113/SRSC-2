@@ -1,17 +1,18 @@
 package pt.unl.fct.srsc.Model;
 
-
 import lombok.Data;
+import pt.unl.fct.srsc.Utils.DATE;
+import pt.unl.fct.srsc.Utils.JSON;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.text.DateFormat;
-import java.util.Date;
 
 @Entity
 @Data
 @Table(name="messages")
 public class Message {
+
+    public static final String FORMAT_DATE = "yyyy/MM/dd HH:mm:ss";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -69,7 +70,12 @@ public class Message {
         this.receiveSignature = receiveSignature;
     }
 
+    @Override
+    public String toString() {
+        return JSON.convert(this);
+    }
+
     private String actualDate(){
-        return DateFormat.getDateInstance().format(new Date());
+        return DATE.actual(FORMAT_DATE);
     }
 }

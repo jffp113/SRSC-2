@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import pt.unl.fct.srsc.Utils.JSON;
 
 @Entity
 @Data
@@ -55,6 +55,6 @@ public class User {
 
     @Override
     public String toString() {
-        return ReflectionToStringBuilder.toString(this);
+        return JSON.convert(this);
     }
 }
