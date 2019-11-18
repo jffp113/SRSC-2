@@ -8,10 +8,5 @@ public class OkResult<T> implements Result<T> {
         this.result = result;
     }
 
-    @Override
-    public ErrorCode error() {
-        return ErrorCode.OK;
-    }
-
 }
 

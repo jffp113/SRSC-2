@@ -7,5 +7,6 @@ import pt.unl.fct.srsc.Model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User getByUuid(String id);
+    User getUserByUuid(String uuid);
+    User getUserById(Long id);
 }

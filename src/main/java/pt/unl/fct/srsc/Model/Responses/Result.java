@@ -1,17 +1,19 @@
 package pt.unl.fct.srsc.Model.Responses;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 public interface Result<E> {
 
-    enum ErrorCode{ OK, CONFLICT, NOT_FOUND, INTERNAL_ERROR, NULL_NOT_ALLOWED, NOT_IMPLEMENTED };
-
-    ErrorCode error();
-
-    static <T> Result<T> ok(T result) {
-        return new OkResult<>(result);
+    static <T> ResponseEntity<Result<T>> ok(T result) {
+        return ResponseEntity.ok(new OkResult<>(result));
     }
 
-    static <T> ErrorResult<T> error(ErrorCode error) {
-        return new ErrorResult<>(error);
+    //TODO: Apagar se não for usado
+    static <T> ResponseEntity error(HttpStatus status, String msg) {
+        return ResponseEntity
+                .status(status)
+                .body(new ErrorResult<>(msg));
     }
 }
 

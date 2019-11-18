@@ -1,89 +1,53 @@
 package pt.unl.fct.srsc.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import lombok.Data;
+import lombok.NonNull;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 @Entity
+@Data
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private Long id;
 
     /**
      * Unique identifier
      * Suggested to be digest of user public key
      */
-    @Column(nullable = false)
+    @NotNull
     private String uuid;
-
-    /**
-     * User message box
-     */
-    private String mbox;
-
-    /**
-     * User receipt box
-     */
-    private String rbox;
-
 
     /**
      * Secure Related Data Public key
      */
+    @NotNull
     private String secdata;
 
     public User() {}
 
-    public User(String uuid) {
+    public User(String uuid, String secdata) {
         this.uuid = uuid;
-        this.mbox = uuid + "mbox";
-        this.rbox = uuid + "rbox";
+        this.secdata = secdata;
+    }
+
+    public User(Long id, String uuid, String secdata) {
+        this.id = id;
+        this.uuid = uuid;
+        this.secdata = secdata;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUuid() {
         return uuid;
-    }
-
-    public void setUid(String uid) {
-        this.uuid = uid;
-    }
-
-    public String getMbox() {
-        return mbox;
-    }
-
-    public void setMbox(String mbox) {
-        this.mbox = mbox;
-    }
-
-    public String getRbox() {
-        return rbox;
-    }
-
-    public void setRbox(String rbox) {
-        this.rbox = rbox;
-    }
-
-    public String getSecdata() {
-        return secdata;
-    }
-
-    public void setSecdata(String secdata) {
-        this.secdata = secdata;
     }
 
     @Override
