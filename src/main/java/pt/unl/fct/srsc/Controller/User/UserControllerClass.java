@@ -28,10 +28,9 @@ public class UserControllerClass implements UserController {
 
     @Override
     public ResponseEntity<Result<Long>> createUser(User user) {
-        LOG.info(String.format("Creating user with uudi %s.", user.getUuid()));
         String uuid = user.getUuid();
         if(alreadyExists(uuid)){
-            LOG.info(String.format(USER_ALREADY_EXISTS, uuid));
+            LOG.warn(String.format(USER_ALREADY_EXISTS, uuid));
             return error(HttpStatus.CONFLICT, String.format(USER_ALREADY_EXISTS, uuid));
         }
         userRepository.save(user);
@@ -41,10 +40,9 @@ public class UserControllerClass implements UserController {
 
     @Override
     public ResponseEntity<Result<User>> listUser(Long id) {
-        LOG.info(String.format("List user with id %s", id));
         User user = userRepository.getUserById(id);
         if(user == null){
-            LOG.info(String.format(USER_DON_T_EXISTS, id));
+            LOG.warn(String.format(USER_DON_T_EXISTS, id));
             return error(HttpStatus.NOT_FOUND, String.format(USER_DON_T_EXISTS, id));
         }
         LOG.info("List user: "  + user.toString());
