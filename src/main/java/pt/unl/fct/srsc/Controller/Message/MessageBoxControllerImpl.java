@@ -76,7 +76,7 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     public ResponseEntity<Result<Message>> receiveMessage(Long id, Long mid) {
         Message message = messageBoxRepository.getMessageById(mid);
 
-        if(isNull(message))
+        if(isNull(message, mid))
             return error(HttpStatus.NOT_FOUND);
 
         if(!message.getTo().equals(id)) {
@@ -91,7 +91,7 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     public ResponseEntity<Result<Void>> receiptMessage(Long id, Long mid, String b64Sign) {
         Message message = messageBoxRepository.getMessageByIdAndTo(mid, id);
 
-        if(isNull(message))
+        if(isNull(message, mid))
             return error(HttpStatus.NOT_FOUND);
 
         message.setReceiveSignature(b64Sign);
@@ -107,7 +107,7 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     public ResponseEntity<Result<Message>> messageStatus(Long id, Long mid) {
         Message message = messageBoxRepository.getMessageByIdAndTo(mid, id);
 
-        if(isNull(message))
+        if(isNull(message, mid))
             return error(HttpStatus.NOT_FOUND);
 
         LOG.info(String.format(MESSAGE_STATUS + " User[%s], Message[%s]", id, mid));
@@ -123,9 +123,9 @@ public class MessageBoxControllerImpl implements MessageBoxController {
         return false;
     }
 
-    private boolean isNull(Message m){
+    private boolean isNull(Message m, Long mid){
         if(m == null){
-            LOG.warn(MESSAGE_STATUS + MESSAGE_DONT_EXIST, m.getId());
+            LOG.warn(MESSAGE_STATUS + MESSAGE_DONT_EXIST, mid);
             return true;
         }
         return false;
