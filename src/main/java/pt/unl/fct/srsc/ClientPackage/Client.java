@@ -1,10 +1,12 @@
 package pt.unl.fct.srsc.ClientPackage;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Client {
 
     private static String BASE;
+    private static String SPACE = "    ";
 
     public static void main(String[] args) {
 
@@ -24,7 +26,7 @@ public class Client {
         System.out.print("Any input for help option.");
         System.out.println();
         System.out.print("> ");
-        String comm = in. nextLine().toLowerCase();
+        String comm = in. nextLine().toLowerCase().trim();
 
         while(!comm.equals("exit")){
             switch (comm){
@@ -56,21 +58,22 @@ public class Client {
             }
             System.out.println();
             System.out.print("> ");
-            comm = in. nextLine().toLowerCase();
+            comm = in. nextLine().toLowerCase().trim();
         }
         System.exit(0);
     }
 
     private static void help() {
         //TODO
-        System.out.println("LIST USER:          listuser <userID>");
+        System.out.println("LIST USER:          listuser");
         System.out.println("LIST ALL USERS:     listall");
-        System.out.println("LIST NEW MESSAGES:  new <userID>");
-        System.out.println("LIST ALL MESSAGES:  all <userID>");
+        System.out.println("LIST NEW MESSAGES:  new");
+        System.out.println("LIST ALL MESSAGES:  all");
         System.out.println("SEND MESSAGES:      send");
-        System.out.println("RECEIVE MESSAGES:   recv <userID> <msgID>");
-        System.out.println("RECEIPT MESSAGES:   receipt <userID> <msgID>");
-        System.out.println("MESSAGES STATUS:    status <userID> <msgID>");
+        System.out.println("RECEIVE MESSAGES:   recv");
+        System.out.println("RECEIPT MESSAGES:   receipt");
+        System.out.println("MESSAGES STATUS:    status");
+        System.out.println("EXIT:               exit");
     }
 
     //API Methods --------------------------------------------
@@ -87,50 +90,78 @@ public class Client {
 
     private static void listUser(ClientImpl client, Scanner in) {
         //TODO
-        System.out.println("List user:");
-        client.listUser();
+        System.out.print("  > USER UUID: ");
+        String uuid = in.nextLine();
+        System.out.println(SPACE + "USER: " + client.listUser(uuid));
     }
 
     private static void list(ClientImpl client, Scanner in) {
         //TODO
-        System.out.println("List all users:");
-        client.list();
+        List<String> list =  client.list();
+        for (String a : list)
+            System.out.println(SPACE + a);
     }
 
     private static void newMessages(ClientImpl client, Scanner in) {
         //TODO
-        System.out.println("Get new messages:");
-        client.newMessages();
+        System.out.print("  > USER ID: ");
+        String id = in.nextLine();
+
+        List<String> list =  client.newMessages(id);
+        if(list.isEmpty()){
+            System.out.println(SPACE + "NO NEW MESSAGE FOR USER: " + id);
+        }else
+            for (String a : list)
+                System.out.println(SPACE + a);
     }
 
     private static void all(ClientImpl client, Scanner in) {
         //TODO
-        System.out.println("Get all messages:");
-        client.all();
+        System.out.print("  > USER ID: ");
+        String id = in.nextLine();
+
+        List<String> list =  client.all(id);
+        if(list.isEmpty()){
+            System.out.println(SPACE + "NO MESSAGE FROM USER BOX: " + id);
+        }else
+            for (String a : list)
+                System.out.println(SPACE  + a);
     }
 
     private static void send(ClientImpl client, Scanner in) {
         //TODO
-        System.out.println("Send message:");
-        client.send();
+        System.out.print("  > USER TO: ");
+        String to = in.nextLine();
+        System.out.print("  > MESSAGE: ");
+        String message = in.nextLine();
+        client.send(to, message);
+        System.out.println(SPACE + "MESSAGE SENDED.");
     }
 
     private static void recv(ClientImpl client, Scanner in) {
         //TODO
-        System.out.println("Receive message:");
-        client.recv();
+        System.out.print("  > USER ID: ");
+        String id = in.nextLine();
+        System.out.print("  > MESSAGE ID: ");
+        String mid = in.nextLine();
+        String message = client.recv(id, mid);
+        System.out.println(SPACE + "MESSAGE: " + message);
     }
 
     private static void receipt(ClientImpl client, Scanner in) {
         //TODO
-        System.out.println("Receipt message:");
-        client.receipt();
+        System.out.print("  > MESSAGE ID: ");
+        String mid = in.nextLine();
+        client.receipt(mid);
+        System.out.println(SPACE + "MESSAGE RECEIPT.");
     }
 
     private static void status(ClientImpl client, Scanner in) {
         //TODO
-        System.out.println("Status:");
-        client.status();
+        System.out.print("  > MESSAGE ID: ");
+        String mid = in.nextLine();
+        String status = client.status(mid);
+        System.out.println(SPACE + status);
     }
 
 }
