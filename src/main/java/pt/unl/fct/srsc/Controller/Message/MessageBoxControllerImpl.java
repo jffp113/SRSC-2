@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import pt.unl.fct.srsc.Controller.User.UserControllerClass;
+import pt.unl.fct.srsc.Controller.User.UserControllerImpl;
 import pt.unl.fct.srsc.Model.Message;
 import pt.unl.fct.srsc.Responses.Result;
 import pt.unl.fct.srsc.Repository.MessageBoxRepository;
@@ -18,7 +18,7 @@ import static pt.unl.fct.srsc.Responses.Result.error;
 import static pt.unl.fct.srsc.Responses.Result.result;
 
 @RestController
-public class MessageBoxControllerClass implements MessageBoxController {
+public class MessageBoxControllerImpl implements MessageBoxController {
 
     public static final String LIST_NEW_MESSAGES = "List new messages: ";
     public static final String LIST_ALL_MESSAGES = "List all messages: ";
@@ -119,7 +119,7 @@ public class MessageBoxControllerClass implements MessageBoxController {
     private boolean exists(Long id){
         if(userRepository.existsById(id))
             return true;
-        LOG.warn(String.format(UserControllerClass.USER_DON_T_EXISTS, id));
+        LOG.warn(String.format(UserControllerImpl.USER_DON_T_EXISTS, id));
         return false;
     }
 
@@ -132,8 +132,9 @@ public class MessageBoxControllerClass implements MessageBoxController {
     }
 
     private boolean signCorrect(Message message) {
-        //TODO check SIGNATURE
-        if(true)
+        String msgSign = message.getSign();
+        String msgParam = message.getParameters();//TODO check SIGNATURE
+        if(msgSign == msgParam)
             return true;
         LOG.warn(SIGNATURE_NOT_ACCEPTABLE);
         return false;

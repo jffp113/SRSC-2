@@ -16,7 +16,7 @@ import static pt.unl.fct.srsc.Responses.Result.error;
 import static pt.unl.fct.srsc.Responses.Result.result;
 
 @RestController
-public class UserControllerClass implements UserController {
+public class UserControllerImpl implements UserController {
 
     public static final String CREATE_USER = "Create user: ";
     public static final String LIST_USER = "List user: ";

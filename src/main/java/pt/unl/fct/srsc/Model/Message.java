@@ -6,6 +6,8 @@ import pt.unl.fct.srsc.Utils.JSON;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 
 @Entity
 @Data
@@ -46,36 +48,24 @@ public class Message {
         this.receivedDate = null;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public Long getFrom() {
-        return from;
-    }
+    public Long getFrom() { return from; }
 
-    public Long getTo() {
-        return to;
-    }
+    public Long getTo() { return to; }
 
-    public void setReceivedDate(){
-        this.receivedDate = actualDate();
-    }
+    public String getSign() { return receiveSignature; }
 
-    public void setSendDate(){
-        this.sendDate = actualDate();
-    }
+    public String getParameters(){ return from + to + messageFrom + messageTo; }
 
-    public void setReceiveSignature(String receiveSignature) {
-        this.receiveSignature = receiveSignature;
-    }
+    public void setReceivedDate(){ this.receivedDate = actualDate(); }
+
+    public void setSendDate(){ this.sendDate = actualDate(); }
+
+    public void setReceiveSignature(String receiveSignature) { this.receiveSignature = receiveSignature; }
 
     @Override
-    public String toString() {
-        return JSON.convert(this);
-    }
+    public String toString() { return JSON.convert(this); }
 
-    private String actualDate(){
-        return DATE.actual(FORMAT_DATE);
-    }
+    private String actualDate(){ return DATE.actual(FORMAT_DATE); }
 }
