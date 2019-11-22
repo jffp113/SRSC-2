@@ -32,10 +32,11 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ResponseEntity<Result<Object>> createUser(User user) {
-        String uuid = user.getUuid();
-        if(exists(uuid))
-            return error(HttpStatus.CONFLICT, LOG.warn(CREATE_USER + USER + ALREADY_EXISTS, uuid));
-
+        User userR = userRepository.getUserByUuid(user.getUuid());
+        if(exists(userR)) {
+            return result(userR.getId()); //TODO: Ver se podemos fazer assim: Se ja existir devolvemos o id
+            //return error(HttpStatus.CONFLICT, LOG.warn(CREATE_USER + USER + ALREADY_EXISTS, userR.getUuid()));
+        }
         userRepository.save(user);
         LOG.info(CREATE_USER  + USER, user.toString());
         return result(user.getId());
@@ -60,8 +61,8 @@ public class UserControllerImpl implements UserController {
 
     //Auxiliary Methods ---------------------------------------
 
-    private boolean exists(String id){
-        return userRepository.getUserByUuid(id) != null;
+    private User exists(String id){
+        return userRepository.getUserByUuid(id);
     }
 
     private <T> boolean exists(T t){
