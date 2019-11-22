@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 
 
-@SpringBootApplication
-public class SpringBootConsoleApplication 
+//@SpringBootApplication
+public class SpringBootConsoleApplication
   implements CommandLineRunner {
 
 
@@ -24,7 +24,7 @@ public class SpringBootConsoleApplication
     public static void main(String[] args) {
         SpringApplication.run(SpringBootConsoleApplication.class, args);
     }
-  
+
     @Override
     public void run(String... args) {
         System.out.println("Write your command");

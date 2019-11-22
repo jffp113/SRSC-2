@@ -7,4 +7,10 @@ public class ErrorResult<T> implements Result {
     ErrorResult(T error) {
         this.error = error;
     }
+
+    @Override
+    public T value() {
+        return error;
+    }
+
 }

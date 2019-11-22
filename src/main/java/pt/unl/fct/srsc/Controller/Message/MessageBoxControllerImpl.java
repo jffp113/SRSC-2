@@ -1,56 +1,59 @@
 package pt.unl.fct.srsc.Controller.Message;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import pt.unl.fct.srsc.Controller.User.UserControllerImpl;
 import pt.unl.fct.srsc.Model.Message;
 import pt.unl.fct.srsc.Responses.Result;
 import pt.unl.fct.srsc.Repository.MessageBoxRepository;
 import pt.unl.fct.srsc.Repository.UserRepository;
+import pt.unl.fct.srsc.Utils.LOGS;
 
 import java.util.List;
 
+import static pt.unl.fct.srsc.Controller.User.UserControllerImpl.DONT_EXIST;
+import static pt.unl.fct.srsc.Controller.User.UserControllerImpl.USER;
 import static pt.unl.fct.srsc.Responses.Result.error;
 import static pt.unl.fct.srsc.Responses.Result.result;
 
 @RestController
 public class MessageBoxControllerImpl implements MessageBoxController {
 
-    public static final String LIST_NEW_MESSAGES = "List new messages: ";
-    public static final String LIST_ALL_MESSAGES = "List all messages: ";
-    public static final String SEND_MESSAGE = "Send message: ";
-    public static final String RECEIVE_MESSAGE = "Receive message: ";
-    public static final String RECEIPT_MESSAGE = "Receipt message: ";
-    public static final String MESSAGE_STATUS = "Status: ";
+    private static final String LIST_NEW_MESSAGES = "List user new messages: ";
+    private static final String LIST_ALL_MESSAGES = "List user all messages: ";
+    private static final String SEND_MESSAGE = "Send message: ";
+    private static final String RECEIVE_MESSAGE = "Receive message: ";
+    private static final String RECEIPT_MESSAGE = "Receipt message: ";
+    private static final String MESSAGE_STATUS = "Status: ";
 
-    public static final String SIGNATURE_NOT_ACCEPTABLE = "Signature not acceptable.";
-    public static final String MESSAGE_DONT_EXIST = "Message[%s] don't exist.";
-    public static final String USER = " User[%s]";
-
-    private Logger LOG = LoggerFactory.getLogger(MessageBoxController.class);
+    private static final String SIGNATURE_NOT_ACCEPTABLE = "Signature not acceptable.";
+    private static final String TO_DONT_MATCH_WITH_MESSAGE = "To[%s] don't match with Message[%s].";
+    private static final String MESSAGE = "MESSAGE[%s] ";
+    private static final String SIGNATURE = "SIGNATURE[%s] ";
 
     @Autowired
     private MessageBoxRepository messageBoxRepository;
     @Autowired
     private UserRepository userRepository;
 
+    private LOGS LOG = new LOGS(MessageBoxControllerImpl.class);
+
     @Override
     public ResponseEntity<Result<List<Message>>> listUserNewMessages(Long id) {
-        if(!exists(id))
-            return error(HttpStatus.NOT_FOUND);
-        LOG.info(String.format(LIST_NEW_MESSAGES + USER, id));
-        return result(messageBoxRepository.getAllByToAndReceiveSignatureNull(id));
+        if(dontExist(id))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(LIST_NEW_MESSAGES + USER + DONT_EXIST, id));
+
+        LOG.info(LIST_NEW_MESSAGES + USER, id);
+        return result(messageBoxRepository.getAllByToAndSignatureNull(id));
     }
 
     @Override
     public ResponseEntity<Result<List<Message>>> listAllUserMessages(Long id) {
-        if(!exists(id))
-            return error(HttpStatus.NOT_FOUND);
-        LOG.info(String.format(LIST_ALL_MESSAGES + USER, id));
+        if(dontExist(id))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(LIST_ALL_MESSAGES + USER + DONT_EXIST, id));
+
+        LOG.info(LIST_ALL_MESSAGES + USER , id);
         return result(messageBoxRepository.getAllByTo(id));
     }
 
@@ -59,16 +62,16 @@ public class MessageBoxControllerImpl implements MessageBoxController {
         Long from = message.getFrom();
         Long to = message.getTo();
 
-        if(!exists(from) || !exists(to))
-            return error(HttpStatus.NOT_FOUND);
+        if(dontExist(from))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(SEND_MESSAGE + USER + DONT_EXIST, from));
 
-        if(!signCorrect(message))
-            return error(HttpStatus.NOT_ACCEPTABLE);
+        if(dontExist(to))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(SEND_MESSAGE + USER + DONT_EXIST, to));
 
         message.setSendDate();
         messageBoxRepository.save(message);
 
-        LOG.info(String.format(SEND_MESSAGE + " From[%s] -> To[%s]", from, to));
+        LOG.info(SEND_MESSAGE + USER + "-> " + USER, from, to);
         return result(message.getId());
     }
 
@@ -76,14 +79,16 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     public ResponseEntity<Result<Message>> receiveMessage(Long id, Long mid) {
         Message message = messageBoxRepository.getMessageById(mid);
 
-        if(isNull(message, mid))
-            return error(HttpStatus.NOT_FOUND);
+        if(dontExist(id))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(RECEIVE_MESSAGE + USER + DONT_EXIST, id));
 
-        if(!message.getTo().equals(id)) {
-            LOG.warn(RECEIVE_MESSAGE + " To[%s] don't match with Message[%s].", id, mid);
-            return error(HttpStatus.NOT_FOUND);
-        }
-        LOG.info(String.format(RECEIVE_MESSAGE + " User[%s], Message[%s]", id, mid));
+        if(dontExist(message))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(RECEIVE_MESSAGE + MESSAGE + DONT_EXIST, mid));
+
+        if(!message.getTo().equals(id))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(RECEIVE_MESSAGE + TO_DONT_MATCH_WITH_MESSAGE, id, mid));
+
+        LOG.info(String.format(RECEIVE_MESSAGE + USER + ", " + MESSAGE, id, mid));
         return result(message);
     }
 
@@ -91,15 +96,17 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     public ResponseEntity<Result<Void>> receiptMessage(Long id, Long mid, String b64Sign) {
         Message message = messageBoxRepository.getMessageByIdAndTo(mid, id);
 
-        if(isNull(message, mid))
-            return error(HttpStatus.NOT_FOUND);
+        if(dontExist(message))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(RECEIPT_MESSAGE + MESSAGE + DONT_EXIST, mid));
 
-        message.setReceiveSignature(b64Sign);
+        message.setSignature(b64Sign);
         message.setReceivedDate();
-        //TODO verify ?
+
+        if(!signCorrect(message))
+            return error(HttpStatus.NOT_ACCEPTABLE, LOG.warn(RECEIPT_MESSAGE + SIGNATURE_NOT_ACCEPTABLE));
 
         messageBoxRepository.save(message);
-        LOG.info(String.format(RECEIPT_MESSAGE + " User[%s], Message[%s], Signature[%s]", id, mid, b64Sign));
+        LOG.info(RECEIPT_MESSAGE + USER + ", " +MESSAGE + ", " + SIGNATURE, id, mid, b64Sign);
         return result();
     }
 
@@ -107,37 +114,25 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     public ResponseEntity<Result<Message>> messageStatus(Long id, Long mid) {
         Message message = messageBoxRepository.getMessageByIdAndTo(mid, id);
 
-        if(isNull(message, mid))
-            return error(HttpStatus.NOT_FOUND);
+        if(dontExist(message))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(MESSAGE_STATUS + MESSAGE + DONT_EXIST, mid));
 
-        LOG.info(String.format(MESSAGE_STATUS + " User[%s], Message[%s]", id, mid));
+        LOG.info(MESSAGE_STATUS + USER + ", " +MESSAGE, id, mid);
         return result(message);
     }
 
     //Auxiliary Methods ---------------------------------------
 
-    private boolean exists(Long id){
-        if(userRepository.existsById(id))
-            return true;
-        LOG.warn(String.format(UserControllerImpl.USER_DON_T_EXISTS, id));
-        return false;
+    private boolean dontExist(Long id){
+        return !userRepository.existsById(id);
     }
 
-    private boolean isNull(Message m, Long mid){
-        if(m == null){
-            LOG.warn(MESSAGE_STATUS + MESSAGE_DONT_EXIST, mid);
-            return true;
-        }
-        return false;
+    private <T> boolean dontExist(T m){
+        return m == null;
     }
 
     private boolean signCorrect(Message message) {
-        String msgSign = message.getSign();
-        String msgParam = message.getParameters();//TODO check SIGNATURE
-        if(msgSign == msgParam)
-            return true;
-        LOG.warn(SIGNATURE_NOT_ACCEPTABLE);
-        return false;
+        return message.getSignature() == message.getSignature(); //TODO check SIGNATURE
     }
 
 }

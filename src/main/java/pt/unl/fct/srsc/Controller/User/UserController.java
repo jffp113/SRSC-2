@@ -39,7 +39,7 @@ public interface UserController {
             value = CREATE,
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity createUser(
+    ResponseEntity<Result<Object>> createUser(
             @RequestBody User user);
 
 

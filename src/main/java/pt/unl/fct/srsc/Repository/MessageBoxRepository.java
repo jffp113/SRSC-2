@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface MessageBoxRepository extends JpaRepository<Message, Long> {
-    List<Message> getAllByToAndReceiveSignatureNull(Long id);
+    List<Message> getAllByToAndSignatureNull(Long id);
     List<Message> getAllByTo(Long id);
     Message getMessageById(Long mid);
     Message getMessageByIdAndTo(Long mid, Long id);

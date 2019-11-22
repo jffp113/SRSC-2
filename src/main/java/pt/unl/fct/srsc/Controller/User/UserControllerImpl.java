@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.unl.fct.srsc.Responses.Result;
 import pt.unl.fct.srsc.Model.User;
 import pt.unl.fct.srsc.Repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import pt.unl.fct.srsc.Utils.LOGS;
 
 import java.util.List;
 
@@ -22,48 +21,51 @@ public class UserControllerImpl implements UserController {
     public static final String LIST_USER = "List user: ";
     public static final String LIST_ALL_USERS = "List all users: ";
 
-    public static final String USER_ALREADY_EXISTS = "User[%s] already exist.";
-    public static final String USER_DON_T_EXISTS = "User[%s] don't exist.";
-
-    private Logger LOG = LoggerFactory.getLogger(UserController.class);
+    public static final String ALREADY_EXISTS = "already exist.";
+    public static final String DONT_EXIST = "don't exist.";
+    public static final String USER = "USER[%s] ";
 
     @Autowired
     private UserRepository userRepository;
 
+    private LOGS LOG = new LOGS(UserControllerImpl.class);
+
     @Override
-    public ResponseEntity<Result<Long>> createUser(User user) {
+    public ResponseEntity<Result<Object>> createUser(User user) {
         String uuid = user.getUuid();
-        if(alreadyExists(uuid)){
-            LOG.warn(String.format(CREATE_USER + USER_ALREADY_EXISTS, uuid));
-            return error(HttpStatus.CONFLICT);
-        }
+        if(exists(uuid))
+            return error(HttpStatus.CONFLICT, LOG.warn(CREATE_USER + USER + ALREADY_EXISTS, uuid));
+
         userRepository.save(user);
-        LOG.info(CREATE_USER + user.toString());
+        LOG.info(CREATE_USER  + USER, user.toString());
         return result(user.getId());
     }
 
     @Override
     public ResponseEntity<Result<User>> listUser(Long id) {
         User user = userRepository.getUserById(id);
-        if(user == null){
-            LOG.warn(String.format(USER_DON_T_EXISTS, id));
-            return error(HttpStatus.NOT_FOUND);
-        }
+        if(!exists(user))
+            return error(HttpStatus.NOT_FOUND, LOG.warn(LIST_USER + USER + DONT_EXIST, id));
+
         LOG.info(LIST_USER + user.toString());
         return result(user);
     }
 
     @Override
     public ResponseEntity<Result<List<User>>> listAllUsers() {
-        LOG.info(LIST_ALL_USERS);
         List<User> list = userRepository.findAll();
+        LOG.info(LIST_ALL_USERS + list.toString());
         return result(list);
     }
 
     //Auxiliary Methods ---------------------------------------
 
-    private boolean alreadyExists(String id){
+    private boolean exists(String id){
         return userRepository.getUserByUuid(id) != null;
+    }
+
+    private <T> boolean exists(T t){
+        return t != null;
     }
 
 }
