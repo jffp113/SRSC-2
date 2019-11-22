@@ -36,14 +36,14 @@ public interface MessageBoxController {
      * @return
      * The server reply is a message
      * containing in a result field an array
-     * of mes- sage identifiers (strings).
+     * of message identifiers (strings).
      * These should be used as given to have
      * access to messages’ contents.
      */
     @GetMapping(
             value = NEW + "/{id}",
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<List<Message>>listUserNewMessages(
+    ResponseEntity<List<String>>listUserNewMessages(
             @PathVariable( "id" ) Long id);
 
     /**
@@ -58,14 +58,12 @@ public interface MessageBoxController {
      * @return
      * The server reply is similar to the previous
      * one (NEW), but the result an array containing
-     * two arrays: one with the identifiers of the
-     * received messages, and another with the identifiers
-     * of the sent messages.
+     * all messages.
      */
     @GetMapping(
             value = ALL + "/{id}",
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<List<Message>> listAllUserMessages(
+    ResponseEntity<List<String>> listAllUserMessages(
             @PathVariable( "id" ) Long id);
 
     /**
@@ -94,7 +92,7 @@ public interface MessageBoxController {
             value = SEND,
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<Long> sendMessageToUser(
+    ResponseEntity<Long[]> sendMessageToUser(
             @RequestBody Message message);
 
     /**

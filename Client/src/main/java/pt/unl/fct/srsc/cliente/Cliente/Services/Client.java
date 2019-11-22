@@ -1,11 +1,13 @@
 package pt.unl.fct.srsc.cliente.Cliente.Services;
 
-import org.springframework.shell.standard.ShellOption;
+import pt.unl.fct.srsc.cliente.Cliente.Model.Message;
 import pt.unl.fct.srsc.cliente.Cliente.Model.User;
 
 import java.util.List;
 
 public interface Client {
+
+    //TODO Id: LONGS
 
     boolean isLoggedIn();
     void login(String keystore,String password,String alias,String keyPass);
@@ -14,9 +16,9 @@ public interface Client {
     List<User> list();
     List<String> newMessages(String id);
     List<String> all(String id);
-    String send(String to, String message);
-    String recv(String id, String mid);
-    void receipt(String mid);
-    String status(String mid);
+    List<Long> send(String to, String message);
+    Message recv(String id, String mid);
+    boolean receipt(String mid);
+    Message status(String mid);
 
 }

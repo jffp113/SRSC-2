@@ -36,7 +36,7 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     private LOGS LOG = new LOGS(MessageBoxControllerImpl.class);
 
     @Override
-    public ResponseEntity<List<Message>> listUserNewMessages(Long id) {
+    public ResponseEntity<List<String>> listUserNewMessages(Long id) {
         if(dontExist(id))
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
@@ -45,7 +45,7 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     }
 
     @Override
-    public ResponseEntity<List<Message>> listAllUserMessages(Long id) {
+    public ResponseEntity<List<String>> listAllUserMessages(Long id) {
         if(dontExist(id))
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
@@ -54,7 +54,7 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     }
 
     @Override
-    public ResponseEntity<Long> sendMessageToUser(Message message) {
+    public ResponseEntity<Long[]> sendMessageToUser(Message message) {
         Long from = message.getFrom();
         Long to = message.getTo();
 
@@ -68,7 +68,7 @@ public class MessageBoxControllerImpl implements MessageBoxController {
         messageBoxRepository.save(message);
 
         LOG.info(SEND_MESSAGE + USER + "-> " + USER, from, to);
-        return ResponseEntity.ok(message.getId());
+        return ResponseEntity.ok(new Long[]{from, to});
     }
 
     @Override

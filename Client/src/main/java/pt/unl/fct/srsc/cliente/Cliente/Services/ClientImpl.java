@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pt.unl.fct.srsc.cliente.Cliente.Handlers.RestTemplateResponseErrorHandler;
+import pt.unl.fct.srsc.cliente.Cliente.Model.Message;
 import pt.unl.fct.srsc.cliente.Cliente.Model.User;
 
 
@@ -70,7 +71,7 @@ public class ClientImpl implements Client {
 
     public String listUser(String id) {
         ResponseEntity<User> response  =
-                restTemplate.getForEntity(String.format(createURL(USERS, LIST_ID),id),User.class);
+                restTemplate.getForEntity(createURL(USERS, LIST_ID,id),User.class);
 
         return response.getBody().toString();
     }
@@ -83,50 +84,44 @@ public class ClientImpl implements Client {
     }
 
     public List<String> newMessages(String id) {
-        //TODO
-//        URL url = createURL(MESSAGES, NEW);
-        List<String> list = new LinkedList<>();
-        list.add(id + ": NewMessage1");
-        list.add(id + ": NewMessage2");
-        list.add(id + ": NewMessage3");
-        return list;
+        ResponseEntity<String[]> response  =
+                restTemplate.getForEntity(createURL(MESSAGES, NEW, id),String[].class);
+        return Arrays.asList(response.getBody());
     }
 
     public List<String> all(String id) {
-        //TODO
 //        URL url = createURL(MESSAGES, ALL);
-        List<String> list = new LinkedList<>();
-        list.add(id + ": AllMessage1");
-        list.add(id + ": AllMessage2");
-        list.add(id + ": AllMessage3");
-        return list;
+        ResponseEntity<String[]> response  =
+                restTemplate.getForEntity(createURL(MESSAGES, ALL, id), String[].class);
+        return Arrays.asList(response.getBody());
     }
 
-    public String send(String to, String message) {
-        //TODO
-//        URL url = createURL(MESSAGES, SEND);
-        return message;
+    public List<Long> send(String to, String message) {
+        Long from = null; //TODO
+        ResponseEntity<Long[]> response  =
+                restTemplate.getForEntity(createURL(MESSAGES, SEND, from, to), Long[].class);
+        return Arrays.asList(response.getBody());
     }
 
-    public String recv(String id, String mid) {
-        //TODO
-//        URL url = createURL(MESSAGES, RECV);
-        return mid;
+    public Message recv(String id, String mid) {
+        ResponseEntity<Message> response  =
+                restTemplate.getForEntity(createURL(MESSAGES, RECV, id, mid), Message.class);
+        return response.getBody();
     }
 
-    public void receipt(String mid) {
-        //TODO
-//        URL url = createURL(MESSAGES, RECEIPT);
+    public boolean receipt(String mid) {
+        ResponseEntity<Void> response  =
+                restTemplate.getForEntity(createURL(MESSAGES, SEND, mid), Void.class);
+        return response.getStatusCodeValue() == 200;
     }
 
-    public String status(String mid) {
-
-        //TODO
-//        URL url = createURL(MESSAGES, STATUS);
-        return mid;
+    public Message status(String mid) {
+        ResponseEntity<Message> response  =
+                restTemplate.getForEntity(createURL(MESSAGES, RECV, mid), Message.class);
+        return response.getBody();
     }
 
-    private String createURL(String model, String method){
-        return BASE + model + method;
+    private <T> String createURL(String model, String method, T... f){
+        return String.format(BASE + model + method, f);
     }
 }
