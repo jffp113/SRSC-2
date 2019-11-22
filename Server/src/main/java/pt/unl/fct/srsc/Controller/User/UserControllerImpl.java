@@ -4,15 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import pt.unl.fct.srsc.Responses.Result;
 import pt.unl.fct.srsc.Model.User;
 import pt.unl.fct.srsc.Repository.UserRepository;
 import pt.unl.fct.srsc.Utils.LOGS;
 
 import java.util.List;
-
-import static pt.unl.fct.srsc.Responses.Result.error;
-import static pt.unl.fct.srsc.Responses.Result.result;
 
 @RestController
 public class UserControllerImpl implements UserController {
@@ -31,40 +27,36 @@ public class UserControllerImpl implements UserController {
     private LOGS LOG = new LOGS(UserControllerImpl.class);
 
     @Override
-    public ResponseEntity<Result<Object>> createUser(User user) {
+    public ResponseEntity<Long> createUser(User user) {
         User userR = userRepository.getUserByUuid(user.getUuid());
         if(exists(userR)) {
             LOG.info(CREATE_USER + USER + ALREADY_EXISTS, userR.getId());
-            return result(userR.getId()); //TODO: Ver se podemos fazer assim: Se ja existir devolvemos o id
+            return ResponseEntity.ok(userR.getId()); //TODO: Ver se podemos fazer assim: Se ja existir devolvemos o id
             //return error(HttpStatus.CONFLICT, LOG.warn(CREATE_USER + USER + ALREADY_EXISTS, userR.getUuid()));
         }
         userRepository.save(user);
         LOG.info(CREATE_USER  + USER, user.toString());
-        return result(user.getId());
+        return ResponseEntity.ok(user.getId());
     }
 
     @Override
-    public ResponseEntity<Result<User>> listUser(Long id) {
+    public ResponseEntity<User> listUser(Long id) {
         User user = userRepository.getUserById(id);
         if(!exists(user))
-            return error(HttpStatus.NOT_FOUND, LOG.warn(LIST_USER + USER + DONT_EXIST, id));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         LOG.info(LIST_USER + user.toString());
-        return result(user);
+        return ResponseEntity.ok(user);
     }
 
     @Override
-    public ResponseEntity<Result<List<User>>> listAllUsers() {
+    public ResponseEntity<List<User>> listAllUsers() {
         List<User> list = userRepository.findAll();
         LOG.info(LIST_ALL_USERS + list.toString());
-        return result(list);
+        return ResponseEntity.ok(list);
     }
 
     //Auxiliary Methods ---------------------------------------
-
-    private User exists(String id){
-        return userRepository.getUserByUuid(id);
-    }
 
     private <T> boolean exists(T t){
         return t != null;

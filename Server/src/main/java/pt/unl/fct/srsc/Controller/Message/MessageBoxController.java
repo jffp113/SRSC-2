@@ -4,7 +4,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.unl.fct.srsc.Model.Message;
-import pt.unl.fct.srsc.Responses.Result;
 
 import java.util.List;
 
@@ -44,7 +43,7 @@ public interface MessageBoxController {
     @GetMapping(
             value = NEW + "/{id}",
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<Result<List<Message>>>listUserNewMessages(
+    ResponseEntity<List<Message>>listUserNewMessages(
             @PathVariable( "id" ) Long id);
 
     /**
@@ -66,7 +65,7 @@ public interface MessageBoxController {
     @GetMapping(
             value = ALL + "/{id}",
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<Result<List<Message>>> listAllUserMessages(
+    ResponseEntity<List<Message>> listAllUserMessages(
             @PathVariable( "id" ) Long id);
 
     /**
@@ -95,7 +94,7 @@ public interface MessageBoxController {
             value = SEND,
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<Result<Long>> sendMessageToUser(
+    ResponseEntity<Long> sendMessageToUser(
             @RequestBody Message message);
 
     /**
@@ -117,7 +116,7 @@ public interface MessageBoxController {
     @GetMapping(
             value = RECV + "/{id}/{mid}",
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<Result<Message>> receiveMessage(
+    ResponseEntity<Message> receiveMessage(
             @PathVariable( "id" ) Long id,
             @PathVariable( "mid" ) Long mid);
 
@@ -151,7 +150,7 @@ public interface MessageBoxController {
     @PutMapping(
             value = RECEIPT + "/{id}/{mid}",
             consumes = MediaType.TEXT_PLAIN_VALUE)
-    ResponseEntity<Result<Void>> receiptMessage(
+    ResponseEntity<Void> receiptMessage(
             @PathVariable( "id" ) Long id,
             @PathVariable( "mid" ) Long mid,
             @RequestBody String b64Sign);
@@ -179,7 +178,7 @@ public interface MessageBoxController {
     @GetMapping(
             value = STATUS + "/{id}/{mid}",
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<Result<Message>> messageStatus(
+    ResponseEntity<Message> messageStatus(
             @PathVariable( "id" ) Long id,
             @PathVariable( "mid" ) Long mid);
 

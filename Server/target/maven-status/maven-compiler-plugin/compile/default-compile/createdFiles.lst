@@ -1,0 +1,16 @@
+pt\unl\fct\srsc\Responses\OkResult.class
+pt\unl\fct\srsc\Responses\Result.class
+pt\unl\fct\srsc\Controller\User\UserController.class
+pt\unl\fct\srsc\Utils\LOGS.class
+pt\unl\fct\srsc\Model\User.class
+pt\unl\fct\srsc\Controller\User\UserControllerImpl.class
+pt\unl\fct\srsc\Srsc2Application.class
+pt\unl\fct\srsc\Controller\Message\MessageBoxController.class
+pt\unl\fct\srsc\Repository\MessageBoxRepository.class
+pt\unl\fct\srsc\Responses\ErrorResult.class
+pt\unl\fct\srsc\Controller\Message\MessageBoxControllerImpl.class
+pt\unl\fct\srsc\Repository\UserRepository.class
+pt\unl\fct\srsc\Utils\DATE.class
+pt\unl\fct\srsc\Utils\B64.class
+pt\unl\fct\srsc\Model\Message.class
+pt\unl\fct\srsc\Utils\JSON.class

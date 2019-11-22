@@ -2,7 +2,6 @@ package pt.unl.fct.srsc.Controller.User;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pt.unl.fct.srsc.Responses.Result;
 import pt.unl.fct.srsc.Model.User;
 
 import java.util.List;
@@ -39,7 +38,7 @@ public interface UserController {
             value = CREATE,
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<Result<Object>> createUser(
+    ResponseEntity<Long> createUser(
             @RequestBody User user);
 
 
@@ -62,7 +61,7 @@ public interface UserController {
     @GetMapping(
             value = LIST + "/{id}",
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<Result<User>> listUser(
+    ResponseEntity<User> listUser(
             @PathVariable( "id" ) Long id);
 
     /**
@@ -79,6 +78,6 @@ public interface UserController {
     @GetMapping(
             value = LIST,
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<Result<List<User>>> listAllUsers();
+    ResponseEntity<List<User>> listAllUsers();
 
 }
