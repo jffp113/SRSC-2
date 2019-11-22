@@ -25,7 +25,6 @@ public class ClientImpl implements Client {
     private String BASE;
     private static String USERS = "/users";
     private static String MESSAGES = "/messages";
-
     private static String CREATE = "/create";
     private static String LIST = "/list";
     private static String LIST_ID = "/list/%s";
@@ -36,10 +35,16 @@ public class ClientImpl implements Client {
     private static String RECEIPT = "/receipt/%s/%s";
     private static String STATUS = "/status/%s/%s";
 
-    private PrivateKey privateKey;
+    private PrivateKey privateKey;//Obter private key da cena de certificados, ou seja, injetar para obter
     private String uuid;
     private String myId;
     private RestTemplate restTemplate;
+
+    @Autowired
+    private MessageBuilder builder;
+
+    @Autowired
+    private MessageDisassembler disassembler;
 
     @Autowired
     public ClientImpl(RestTemplateBuilder restTemplateBuilder) {
