@@ -1,13 +1,18 @@
-package fct.unl.pt.SRSC2Client.Model;
-
-import fct.unl.pt.SRSC2Client.Utils.JSON;
+package pt.unl.fct.srsc.cliente.Cliente.Model;
 
 public class User {
 
     private Long id;
 
+    /**
+     * Unique identifier
+     * Suggested to be digest of user public key
+     */
     private String uuid;
 
+    /**
+     * Secure Related Data Public key
+     */
     private String secdata;
 
     public User() {}
@@ -37,6 +42,6 @@ public class User {
 
     @Override
     public String toString() {
-        return JSON.convert(this);
+        return String.format("[id= %s , uuid= %s , secdata= %s]", id,uuid,secdata);
     }
 }

@@ -1,4 +1,4 @@
-package fct.unl.pt.SRSC2Client.Utils;
+package pt.unl.fct.srsc.cliente.Cliente.Utils;
 
 import java.util.Base64;
 

@@ -1,10 +1,10 @@
-package fct.unl.pt.SRSC2Client;
+package pt.unl.fct.srsc.cliente.Cliente;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Srsc2ClientApplicationTests {
+class ClienteApplicationTests {
 
 	@Test
 	void contextLoads() {
