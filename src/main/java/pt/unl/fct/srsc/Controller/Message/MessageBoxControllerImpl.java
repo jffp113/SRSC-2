@@ -28,9 +28,9 @@ public class MessageBoxControllerImpl implements MessageBoxController {
     private static final String MESSAGE_STATUS = "Status: ";
 
     private static final String SIGNATURE_NOT_ACCEPTABLE = "Signature not acceptable.";
-    private static final String TO_DONT_MATCH_WITH_MESSAGE = "To[%s] don't match with Message[%s].";
-    private static final String MESSAGE = "MESSAGE[%s] ";
-    private static final String SIGNATURE = "SIGNATURE[%s] ";
+    private static final String TO_DONT_MATCH_WITH_MESSAGE = "To[id=%s] don't match with Message[mid=%s].";
+    private static final String MESSAGE = "MESSAGE[mid=%s] ";
+    private static final String SIGNATURE = "SIGNATURE[ %s ] ";
 
     @Autowired
     private MessageBoxRepository messageBoxRepository;

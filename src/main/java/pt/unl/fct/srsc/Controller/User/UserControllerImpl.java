@@ -23,7 +23,7 @@ public class UserControllerImpl implements UserController {
 
     public static final String ALREADY_EXISTS = "already exist.";
     public static final String DONT_EXIST = "don't exist.";
-    public static final String USER = "USER[%s] ";
+    public static final String USER = "USER[id=%s] ";
 
     @Autowired
     private UserRepository userRepository;
@@ -34,6 +34,7 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<Result<Object>> createUser(User user) {
         User userR = userRepository.getUserByUuid(user.getUuid());
         if(exists(userR)) {
+            LOG.info(CREATE_USER + USER + ALREADY_EXISTS, userR.getId());
             return result(userR.getId()); //TODO: Ver se podemos fazer assim: Se ja existir devolvemos o id
             //return error(HttpStatus.CONFLICT, LOG.warn(CREATE_USER + USER + ALREADY_EXISTS, userR.getUuid()));
         }
