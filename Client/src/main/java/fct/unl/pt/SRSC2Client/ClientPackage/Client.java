@@ -1,13 +1,5 @@
-package pt.unl.fct.srsc.ClientPackage;
+package fct.unl.pt.SRSC2Client.ClientPackage;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.PrivateKey;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public interface Client {
