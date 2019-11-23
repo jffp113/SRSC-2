@@ -50,6 +50,14 @@ public class SymmetricEncription extends AbstractSecurity{
         });
     }
 
+    public byte[] decrypt(String input, Key key){
+        return handleException(()->{
+            IVPair messageAndIV = ivSpec.unbuildMessageWithIV(input.getBytes());
+            c.init(Cipher.DECRYPT_MODE, key, messageAndIV.getAlg());
+            return c.doFinal(messageAndIV.getMessage());
+        });
+    }
+
     public IVMessageBuilder getIV(String mode, int blockSize) {
         IVMessageBuilder parameterSpec;
 

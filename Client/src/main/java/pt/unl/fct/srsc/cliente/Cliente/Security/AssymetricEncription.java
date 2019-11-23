@@ -1,14 +1,10 @@
 package pt.unl.fct.srsc.cliente.Cliente.Security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.B64;
 
 import javax.crypto.Cipher;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
 
 @Service
@@ -38,8 +34,13 @@ public class AssymetricEncription {
 
     }
 
-    public byte[] decript(String b64Content, PrivateKey key) throws Exception {
-        cipher.init(Cipher.DECRYPT_MODE, key);
-        return cipher.doFinal(B64.decode(b64Content));
+    public byte[] decript(String b64Content, PrivateKey key) {
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            return cipher.doFinal(B64.decode(b64Content));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

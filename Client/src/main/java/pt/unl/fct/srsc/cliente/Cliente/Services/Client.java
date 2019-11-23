@@ -14,6 +14,6 @@ public interface Client {
     List<Long> send(Long to, String message) throws Exception;
     Message recv(Long id, Long mid);
     boolean receipt(Long mid);
-    Message status(Long mid);
+    Message status(Long id, Long mid);
 
 }

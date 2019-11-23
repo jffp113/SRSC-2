@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import pt.unl.fct.srsc.cliente.Cliente.Handlers.NotFoundException;
 import pt.unl.fct.srsc.cliente.Cliente.Model.Message;
 import pt.unl.fct.srsc.cliente.Cliente.Model.User;
 import pt.unl.fct.srsc.cliente.Cliente.Services.Client;
@@ -22,10 +21,10 @@ public class UserRelatedCommandsImpl {
     }
 
     @ShellMethod("List a specific user in a repository")
-    public User listUser(
+    public String listUser(
             @ShellOption() Long id)
     {
-        return client.listUser(id);
+        return client.listUser(id).toString();
     }
 
     @ShellMethod("List all users in a repository")
@@ -35,15 +34,15 @@ public class UserRelatedCommandsImpl {
     }
 
     @ShellMethod("List the new user messages")
-    public List<Message> news(
+    public String news(
             @ShellOption() Long id)
     {
         List<Message> list = client.newMessages(id);
         if(list.isEmpty()){
             System.out.println("No new Messages.");
-            return list;
+            return list.toString();
         }else
-            return list;
+            return list.toString();
     }
 
     @ShellMethod("List the new user messages")
@@ -65,12 +64,32 @@ public class UserRelatedCommandsImpl {
     {
         try {
             return client.send(to, message).toString();
-        } catch (NotFoundException e) {
-            return "Utilizador com o id 123 Não encotrado" ;
         } catch (Exception e) {
-
-            return "Erro ao executar o comando";
+            return "User not found.";
         }
+    }
+
+    @ShellMethod("Receive user message")
+    public String recv(
+            @ShellOption() Long id,
+            @ShellOption() Long mid)
+    {
+        return client.recv(id, mid).toString();
+    }
+
+    @ShellMethod("Receipt user message")
+    public String receipt(
+            @ShellOption() Long mid)
+    {
+        return client.receipt(mid) ? "Receipted" : "No receipted";
+    }
+
+    @ShellMethod("Message status")
+    public String status(
+            @ShellOption() Long id,
+            @ShellOption() Long mid)
+    {
+        return client.status(id, mid).toString();
     }
 
 

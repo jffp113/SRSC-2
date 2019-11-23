@@ -4,33 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import pt.unl.fct.srsc.cliente.Cliente.Handlers.RestTemplateResponseErrorHandler;
 import pt.unl.fct.srsc.cliente.Cliente.Model.Message;
 import pt.unl.fct.srsc.cliente.Cliente.Model.User;
-import pt.unl.fct.srsc.cliente.Cliente.Security.AssymetricEncription;
 import pt.unl.fct.srsc.cliente.Cliente.Security.CertificateUtil;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.B64;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.HASH;
 
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
-import java.util.Base64;
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -56,9 +42,6 @@ public class ClientImpl implements Client {
     private String secdata;
 
     private RestTemplate restTemplate;
-
-    @Autowired
-    private MessageDisassembler disassembler;
 
     @Autowired
     private CertificateUtil cert;
@@ -106,21 +89,25 @@ public class ClientImpl implements Client {
     public List<Message> newMessages(Long id) {
         ResponseEntity<Message[]> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, NEW, id),Message[].class);
-        return Arrays.asList(response.getBody());
+
+        //TODO: Não consigo resolver o erro
+        Message[] r = decriptMessages(response.getBody());
+        return Arrays.asList(r);
     }
 
     public List<Message> all(Long id) {
-//        URL url = createURL(MESSAGES, ALL);
         ResponseEntity<Message[]> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, ALL, id), Message[].class);
-        return Arrays.asList(response.getBody());
+
+        //TODO: Não consigo resolver o erro
+        Message[] r = decriptMessages(response.getBody());
+        return Arrays.asList(r);
     }
 
     public List<Long> send(Long to, String message) throws Exception {
-        String messageFrom = mBuilder.build(message, getUserPublicKey(to));
-        String messageTo = mBuilder.build(message, B64.decode(secdata));
+        String messageFrom = mBuilder.generate(message, getUserPublicKey(to));
+        String messageTo = mBuilder.generate(message, B64.decode(secdata));
         Message m = new Message(myId, to, messageFrom, messageTo);
-
         ResponseEntity<Long[]> response  =
                 restTemplate.postForEntity(createURL(MESSAGES, SEND, myId, to), m, Long[].class);
         return Arrays.asList(response.getBody());
@@ -129,7 +116,10 @@ public class ClientImpl implements Client {
     public Message recv(Long id, Long mid) {
         ResponseEntity<Message> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, RECV, id, mid), Message.class);
-        return response.getBody();
+
+        //TODO: Não consigo resolver o erro
+        Message r = decriptMessage(response.getBody());
+        return r;
     }
 
     public boolean receipt(Long mid) {
@@ -138,9 +128,9 @@ public class ClientImpl implements Client {
         return response.getStatusCodeValue() == 200;
     }
 
-    public Message status(Long mid) {
+    public Message status(Long id, Long mid) {
         ResponseEntity<Message> response  =
-                restTemplate.getForEntity(createURL(MESSAGES, RECV, mid), Message.class);
+                restTemplate.getForEntity(createURL(MESSAGES, STATUS, id, mid), Message.class);
         return response.getBody();
     }
 
@@ -153,6 +143,20 @@ public class ClientImpl implements Client {
     private byte[] getUserPublicKey(Long to) {
         User userTo = listUser(to);
         return B64.decode(userTo.getSecdata());
+    }
+
+    private Message[] decriptMessages(Message[] messageList) {
+        for(Message m : messageList){
+            byte[] pubKey = getUserPublicKey(m.getFrom());
+            m.setMessageTo(mBuilder.degenerate(m.getMessageTo(), pubKey));
+        }
+        return messageList;
+    }
+
+    private Message decriptMessage(Message m) {
+        byte[] pubKey = getUserPublicKey(m.getFrom());
+        m.setMessageTo(mBuilder.degenerate(m.getMessageTo(), pubKey));
+        return m;
     }
 
 }

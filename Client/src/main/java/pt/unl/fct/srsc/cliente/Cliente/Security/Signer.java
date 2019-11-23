@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.B64;
 
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 
 @Service
 public class Signer {
@@ -32,10 +34,16 @@ public class Signer {
         return B64.encode(signature.sign());
     }
 
-    public boolean verifySignature(String message, String b64Sign,  PublicKey key) throws InvalidKeyException, SignatureException {
-        signature.initVerify(key);
-        signature.update(message.getBytes());
-        return signature.verify(B64.decode(b64Sign));
+    public boolean verifySignature(String message, String b64Sign,  byte[] key) {
+        try {
+            PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(key));
+            signature.initVerify(publicKey);
+            signature.update(message.getBytes());
+            return signature.verify(B64.decode(b64Sign));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
