@@ -4,16 +4,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import pt.unl.fct.srsc.cliente.Cliente.Handlers.RestTemplateResponseErrorHandler;
 import pt.unl.fct.srsc.cliente.Cliente.Model.Message;
 import pt.unl.fct.srsc.cliente.Cliente.Model.User;
+import pt.unl.fct.srsc.cliente.Cliente.Security.AssymetricEncription;
+import pt.unl.fct.srsc.cliente.Cliente.Security.CertificateUtil;
+import pt.unl.fct.srsc.cliente.Cliente.Utils.B64;
+import pt.unl.fct.srsc.cliente.Cliente.Utils.HASH;
 
 
+import javax.annotation.PostConstruct;
+import java.io.File;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,9 +51,10 @@ public class ClientImpl implements Client {
     private static String RECEIPT = "/receipt/%s/%s";
     private static String STATUS = "/status/%s/%s";
 
-    private PrivateKey privateKey;//Obter private key da cena de certificados, ou seja, injetar para obter
     private String uuid;
-    private String myId;
+    private Long myId;
+    private String secdata;
+
     private RestTemplate restTemplate;
 
     @Autowired
@@ -47,38 +64,37 @@ public class ClientImpl implements Client {
     private MessageDisassembler disassembler;
 
     @Autowired
+    private CertificateUtil cert;
+
+    @Autowired
+    private MessageBuilder mBuilder;
+
+    @Autowired
     public ClientImpl(RestTemplateBuilder restTemplateBuilder) {
         restTemplate = restTemplateBuilder
                 .errorHandler(new RestTemplateResponseErrorHandler())
                 .build();
     }
 
-    @Override
-    public boolean isLoggedIn() {
-        return false;
+    @PostConstruct
+    public void init() {
+        uuid = HASH.digestToString(cert.getPersonalCertificate().getPublicKey().getEncoded());
+        secdata = B64.encode(cert.getPersonalCertificate().getPublicKey().getEncoded());
+        myId = this.createUser(uuid, secdata);
     }
 
-    @Override
-    public void login(String keystore, String password, String alias, String keyPass) {
-        //LoadCertificate
-        //Generate UUID
-        //Get User ID From server
+    public Long createUser(String uuid, String secdata){
+        User u = new User(uuid, secdata);
+        ResponseEntity<Long> response  =
+                restTemplate.postForEntity(createURL(USERS, CREATE), u, Long.class);
+        return response.getBody();
     }
 
-    @Override
-    public String createUser(String keystore, String password, String alias, String keyPass){
-        User u = new User("testUUID","mysecdata");
-        ResponseEntity<String> response  =
-                restTemplate.postForEntity(createURL(USERS, CREATE), u, String.class);
-        myId = response.getBody();
-        return myId;
-    }
-
-    public String listUser(String id) {
+    public User listUser(Long id) {
         ResponseEntity<User> response  =
                 restTemplate.getForEntity(createURL(USERS, LIST_ID,id),User.class);
 
-        return response.getBody().toString();
+        return response.getBody();
     }
 
     public List<User> list() {
@@ -88,45 +104,57 @@ public class ClientImpl implements Client {
         return Arrays.asList(response.getBody());
     }
 
-    public List<String> newMessages(String id) {
-        ResponseEntity<String[]> response  =
-                restTemplate.getForEntity(createURL(MESSAGES, NEW, id),String[].class);
+    public List<Message> newMessages(Long id) {
+        ResponseEntity<Message[]> response  =
+                restTemplate.getForEntity(createURL(MESSAGES, NEW, id),Message[].class);
         return Arrays.asList(response.getBody());
     }
 
-    public List<String> all(String id) {
+    public List<Message> all(Long id) {
 //        URL url = createURL(MESSAGES, ALL);
-        ResponseEntity<String[]> response  =
-                restTemplate.getForEntity(createURL(MESSAGES, ALL, id), String[].class);
+        ResponseEntity<Message[]> response  =
+                restTemplate.getForEntity(createURL(MESSAGES, ALL, id), Message[].class);
         return Arrays.asList(response.getBody());
     }
 
-    public List<Long> send(String to, String message) {
-        Long from = null; //TODO
+    public List<Long> send(Long to, String message) throws Exception {
+        MessageBuilder a = new MessageBuilder(message, getUserPublicKey(to));
+        MessageBuilder b = new MessageBuilder(message, B64.decode(secdata));
+        String messageFrom = a.build();
+        String messageTo = b.build();
+        Message m = new Message(myId, to, messageFrom, messageTo);
         ResponseEntity<Long[]> response  =
-                restTemplate.getForEntity(createURL(MESSAGES, SEND, from, to), Long[].class);
+                restTemplate.postForEntity(createURL(MESSAGES, SEND, myId, to), m, Long[].class);
         return Arrays.asList(response.getBody());
     }
 
-    public Message recv(String id, String mid) {
+    public Message recv(Long id, Long mid) {
         ResponseEntity<Message> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, RECV, id, mid), Message.class);
         return response.getBody();
     }
 
-    public boolean receipt(String mid) {
+    public boolean receipt(Long mid) {
         ResponseEntity<Void> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, SEND, mid), Void.class);
         return response.getStatusCodeValue() == 200;
     }
 
-    public Message status(String mid) {
+    public Message status(Long mid) {
         ResponseEntity<Message> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, RECV, mid), Message.class);
         return response.getBody();
     }
 
+    /* Auxiliary Methods ------------------------------------------------------------------- */
+
     private <T> String createURL(String model, String method, T... f){
         return String.format(BASE + model + method, f);
     }
+
+    private byte[] getUserPublicKey(Long to) {
+        User userTo = listUser(to);
+        return B64.decode(userTo.getSecdata());
+    }
+
 }

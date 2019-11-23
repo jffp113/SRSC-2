@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: pt.unl.fct.srsc.Srsc2ApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.462 s - in pt.unl.fct.srsc.Srsc2ApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.643 s - in pt.unl.fct.srsc.Srsc2ApplicationTests

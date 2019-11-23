@@ -43,7 +43,7 @@ public interface MessageBoxController {
     @GetMapping(
             value = NEW + "/{id}",
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<List<String>>listUserNewMessages(
+    ResponseEntity<List<Message>> listUserNewMessages(
             @PathVariable( "id" ) Long id);
 
     /**
@@ -63,7 +63,7 @@ public interface MessageBoxController {
     @GetMapping(
             value = ALL + "/{id}",
             produces = APPLICATION_JSON_VALUE)
-    ResponseEntity<List<String>> listAllUserMessages(
+    ResponseEntity<List<Message>> listAllUserMessages(
             @PathVariable( "id" ) Long id);
 
     /**

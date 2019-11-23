@@ -23,7 +23,6 @@ import java.util.Collection;
 public class CertificateUtil {
     private static final String PERM_CERTIFICATE = "-----BEGIN CERTIFICATE-----\n%s\n-----END CERTIFICATE-----\n";
 
-
     @Value("${security.certchain.path}")
     private String CERTCHAINPATH;
 
@@ -40,7 +39,7 @@ public class CertificateUtil {
 
 
     @PostConstruct
-    public void init() throws KeyStoreException {
+    public void init() {
         permCertificateFile = new File(CERTCHAINPATH);
         privateKey = loadPersonalPrivateKey();
         personalCertificate = loadCertificate();

@@ -42,6 +42,9 @@ public class User {
 
     @Override
     public String toString() {
-        return String.format("[id= %s , uuid= %s , secdata= %s]", id,uuid,secdata);
+        return String.format("\n" +
+                "id=%s \n" +
+                "   uuid=%s \n" +
+                "   secdata=%s \n", id, uuid, secdata);
     }
 }

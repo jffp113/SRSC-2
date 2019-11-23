@@ -7,6 +7,8 @@ import lombok.Data;
 
 import pt.unl.fct.srsc.Utils.JSON;
 
+import java.time.temporal.ValueRange;
+
 @Entity
 @Data
 public class User {
@@ -26,6 +28,7 @@ public class User {
      * Secure Related Data Public key
      */
     @NotNull
+    @Lob
     private String secdata;
 
     public User() {}

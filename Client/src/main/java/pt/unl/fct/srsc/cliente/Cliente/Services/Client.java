@@ -6,19 +6,14 @@ import pt.unl.fct.srsc.cliente.Cliente.Model.User;
 import java.util.List;
 
 public interface Client {
-
-    //TODO Id: LONGS
-
-    boolean isLoggedIn();
-    void login(String keystore,String password,String alias,String keyPass);
-    String createUser(String keystore,String password,String alias,String keyPass);
-    String listUser(String id);
+    Long createUser(String uuid, String secdata);
+    User listUser(Long id);
     List<User> list();
-    List<String> newMessages(String id);
-    List<String> all(String id);
-    List<Long> send(String to, String message);
-    Message recv(String id, String mid);
-    boolean receipt(String mid);
-    Message status(String mid);
+    List<Message> newMessages(Long id);
+    List<Message> all(Long id);
+    List<Long> send(Long to, String message) throws Exception;
+    Message recv(Long id, Long mid);
+    boolean receipt(Long mid);
+    Message status(Long mid);
 
 }

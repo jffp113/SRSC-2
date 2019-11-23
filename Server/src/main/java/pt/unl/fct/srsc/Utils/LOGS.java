@@ -11,10 +11,9 @@ public class LOGS {
         LOG = LoggerFactory.getLogger(clazz);
     }
 
-    public String warn(String string, Object ...f){
+    public void warn(String string, Object ...f){
         String warn = String.format(string, f);
         LOG.warn(warn);
-        return warn;
     }
 
     public void info(String string, Object... f){

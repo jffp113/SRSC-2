@@ -3,7 +3,7 @@ package pt.unl.fct.srsc.cliente.Cliente.Security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.unl.fct.srsc.cliente.Cliente.Utils.Utils;
+import pt.unl.fct.srsc.cliente.Cliente.Utils.B64;
 
 import java.security.*;
 
@@ -31,13 +31,13 @@ public class Signer {
     public String doSign(String contentToSign) throws SignatureException, InvalidKeyException {
         signature.initSign(certificateUtil.getPersonalPrivateKey());
         signature.update(contentToSign.getBytes());
-        return Utils.base64Encode(signature.sign());
+        return B64.encode(signature.sign());
     }
 
     public boolean verifySignature(String message, String b64Sign,  PublicKey key) throws InvalidKeyException, SignatureException {
         signature.initVerify(key);
         signature.update(message.getBytes());
-        return signature.verify(Utils.base64Decode(b64Sign));
+        return signature.verify(B64.decode(b64Sign));
     }
 
     public static Signer getInstace(){
