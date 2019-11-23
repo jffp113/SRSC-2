@@ -36,6 +36,7 @@ public class Message {
 
     private String receivedDate;
 
+    @Lob
     private String signature;
 
     public Message(){ }

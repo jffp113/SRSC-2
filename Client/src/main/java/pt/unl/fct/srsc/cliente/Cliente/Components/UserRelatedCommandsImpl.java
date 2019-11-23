@@ -81,7 +81,13 @@ public class UserRelatedCommandsImpl {
     public String receipt(
             @ShellOption() Long mid)
     {
-        return client.receipt(mid) ? "Receipted" : "No receipted";
+        try {
+            client.receipt(mid);
+        } catch (Exception e) {
+            e.printStackTrace();
+           return "Not receipted";
+        }
+        return "Receipted";
     }
 
     @ShellMethod("Message status")

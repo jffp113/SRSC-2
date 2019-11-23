@@ -13,7 +13,7 @@ public interface Client {
     List<Message> all(Long id);
     List<Long> send(Long to, String message) throws Exception;
     Message recv(Long id, Long mid);
-    boolean receipt(Long mid);
+    void receipt(Long mid) throws Exception;
     Message status(Long id, Long mid);
 
 }

@@ -11,6 +11,7 @@ import pt.unl.fct.srsc.cliente.Cliente.Handlers.RestTemplateResponseErrorHandler
 import pt.unl.fct.srsc.cliente.Cliente.Model.Message;
 import pt.unl.fct.srsc.cliente.Cliente.Model.User;
 import pt.unl.fct.srsc.cliente.Cliente.Security.CertificateUtil;
+import pt.unl.fct.srsc.cliente.Cliente.Security.Signer;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.B64;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.HASH;
 
@@ -49,7 +50,8 @@ public class ClientImpl implements Client {
     @Autowired
     private MessageBuilder mBuilder;
 
-
+    @Autowired
+    private Signer signer;
 
     @Autowired
     public ClientImpl(RestTemplateBuilder restTemplateBuilder) {
@@ -90,7 +92,6 @@ public class ClientImpl implements Client {
         ResponseEntity<Message[]> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, NEW, id),Message[].class);
 
-        //TODO: Não consigo resolver o erro
         Message[] r = decriptMessages(response.getBody());
         return Arrays.asList(r);
     }
@@ -99,7 +100,6 @@ public class ClientImpl implements Client {
         ResponseEntity<Message[]> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, ALL, id), Message[].class);
 
-        //TODO: Não consigo resolver o erro
         Message[] r = decriptMessages(response.getBody());
         return Arrays.asList(r);
     }
@@ -117,20 +117,22 @@ public class ClientImpl implements Client {
         ResponseEntity<Message> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, RECV, id, mid), Message.class);
 
-        //TODO: Não consigo resolver o erro
         Message r = decriptMessage(response.getBody());
         return r;
     }
 
-    public boolean receipt(Long mid) {
-        ResponseEntity<Void> response  =
-                restTemplate.getForEntity(createURL(MESSAGES, SEND, mid), Void.class);
-        return response.getStatusCodeValue() == 200;
+    public void receipt(Long mid) throws Exception {
+        Message message = recv(myId,mid);
+        restTemplate.put(createURL(MESSAGES, RECEIPT,myId, mid),
+                signer.doSign(message.getMessageTo()));
     }
 
     public Message status(Long id, Long mid) {
         ResponseEntity<Message> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, STATUS, id, mid), Message.class);
+        //Falta só este
+
+
         return response.getBody();
     }
 

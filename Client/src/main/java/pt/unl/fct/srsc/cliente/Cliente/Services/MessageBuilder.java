@@ -25,16 +25,12 @@ public class MessageBuilder {
     @Autowired
     private CertificateUtil cert;
 
-    private String a;
-    private String b;
-    private String c;
-
 
     public String generate(String message, byte[] pubKey) throws Exception {
         Key ks  = KeyGenerator.getInstance("AES").generateKey();
         String a = B64.encode(symm.encrypt(message, ks));
-        String b = B64.encode(assy.encript(B64.encode(ks.getEncoded()), pubKey));
-        String c = B64.encode(sign.doSign(a+b));
+        String b = assy.encript(B64.encode(ks.getEncoded()), pubKey);
+        String c = sign.doSign(a+b);
 
         return a + "|" + b + "|" + c;
     }
@@ -46,8 +42,8 @@ public class MessageBuilder {
         String b = m[1];
         String c = m[2];
         if(sign.verifySignature(a+b, c, pubKey)){
-            byte[] ks = assy.decript(b, cert.getPersonalPrivateKey());
-            String message = new String(symm.decrypt(c, new SecretKeySpec(ks, 0, ks.length, "AES")));
+            byte[] ks = B64.decode(assy.decript(b, cert.getPersonalPrivateKey()));
+            String message = new String(symm.decrypt(B64.decode(a), new SecretKeySpec(ks, 0, ks.length, "AES")));
             return message;
         }else
             return null;
