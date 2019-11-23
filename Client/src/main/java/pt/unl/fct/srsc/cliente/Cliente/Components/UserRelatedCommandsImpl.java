@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import pt.unl.fct.srsc.cliente.Cliente.Handlers.NotFoundException;
 import pt.unl.fct.srsc.cliente.Cliente.Model.Message;
 import pt.unl.fct.srsc.cliente.Cliente.Model.User;
 import pt.unl.fct.srsc.cliente.Cliente.Services.Client;
@@ -46,27 +47,29 @@ public class UserRelatedCommandsImpl {
     }
 
     @ShellMethod("List the new user messages")
-    public List<Message> all(
+    public String all(
             @ShellOption() Long id)
     {
         List<Message> list = client.all(id);
         if(list.isEmpty()){
             System.out.println("No Messages.");
-            return list;
+            return list.toString();
         }else
-            return list;
+            return list.toString();
     }
 
     @ShellMethod("Send new message to user")
-    public List<Long> send(
+    public String send(
             @ShellOption() Long to,
             @ShellOption() String message)
     {
         try {
-            return client.send(to, message);
+            return client.send(to, message).toString();
+        } catch (NotFoundException e) {
+            return "Utilizador com o id 123 Não encotrado" ;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+
+            return "Erro ao executar o comando";
         }
     }
 

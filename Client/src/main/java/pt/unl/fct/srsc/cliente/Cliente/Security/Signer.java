@@ -10,8 +10,6 @@ import java.security.*;
 @Service
 public class Signer {
 
-    private static Signer signer = new Signer();
-
     private static final String SIGN_ALGORITHM = "SHA512withRSA";
 
     private Signature signature;
@@ -20,7 +18,7 @@ public class Signer {
     private CertificateUtil certificateUtil;
 
 
-    private Signer() {
+    public Signer() {
         try {
             signature = Signature.getInstance(SIGN_ALGORITHM);
         } catch (NoSuchAlgorithmException e) {
@@ -38,10 +36,6 @@ public class Signer {
         signature.initVerify(key);
         signature.update(message.getBytes());
         return signature.verify(B64.decode(b64Sign));
-    }
-
-    public static Signer getInstace(){
-        return signer;
     }
 
 }

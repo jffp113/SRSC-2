@@ -58,9 +58,6 @@ public class ClientImpl implements Client {
     private RestTemplate restTemplate;
 
     @Autowired
-    private MessageBuilder builder;
-
-    @Autowired
     private MessageDisassembler disassembler;
 
     @Autowired
@@ -68,6 +65,8 @@ public class ClientImpl implements Client {
 
     @Autowired
     private MessageBuilder mBuilder;
+
+
 
     @Autowired
     public ClientImpl(RestTemplateBuilder restTemplateBuilder) {
@@ -118,11 +117,10 @@ public class ClientImpl implements Client {
     }
 
     public List<Long> send(Long to, String message) throws Exception {
-        MessageBuilder a = new MessageBuilder(message, getUserPublicKey(to));
-        MessageBuilder b = new MessageBuilder(message, B64.decode(secdata));
-        String messageFrom = a.build();
-        String messageTo = b.build();
+        String messageFrom = mBuilder.build(message, getUserPublicKey(to));
+        String messageTo = mBuilder.build(message, B64.decode(secdata));
         Message m = new Message(myId, to, messageFrom, messageTo);
+
         ResponseEntity<Long[]> response  =
                 restTemplate.postForEntity(createURL(MESSAGES, SEND, myId, to), m, Long[].class);
         return Arrays.asList(response.getBody());

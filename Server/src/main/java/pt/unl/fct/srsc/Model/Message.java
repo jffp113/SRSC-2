@@ -25,9 +25,11 @@ public class Message {
     private Long to;
 
     @NotNull
+    @Lob
     private String messageFrom;
 
     @NotNull
+    @Lob
     private String messageTo;
 
     private String sendDate;
