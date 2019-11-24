@@ -104,36 +104,35 @@ public class ClientImpl implements Client {
         return Arrays.asList(r);
     }
 
-    public List<Long> send(Long to, String message) throws Exception {
+    public String send(Long to, String message) throws Exception {
         String messageFrom = mBuilder.generate(message, getUserPublicKey(to));
         String messageTo = mBuilder.generate(message, B64.decode(secdata));
         Message m = new Message(myId, to, messageFrom, messageTo);
         ResponseEntity<Long[]> response  =
                 restTemplate.postForEntity(createURL(MESSAGES, SEND, myId, to), m, Long[].class);
-        return Arrays.asList(response.getBody());
+        if(response.getBody() != null) return "Sended.";
+        return "Error.";
     }
 
     public Message recv(Long id, Long mid) {
         ResponseEntity<Message> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, RECV, id, mid), Message.class);
 
-        Message r = decriptMessage(response.getBody());
-        return r;
+        return decriptMessage(response.getBody());
     }
 
     public void receipt(Long mid) throws Exception {
-        Message message = recv(myId,mid);
+        Message message = recv(myId, mid);
         restTemplate.put(createURL(MESSAGES, RECEIPT,myId, mid),
                 signer.doSign(message.getMessageTo()));
     }
 
-    public Message status(Long id, Long mid) {
+    public String status(Long id, Long mid) {
         ResponseEntity<Message> response  =
                 restTemplate.getForEntity(createURL(MESSAGES, STATUS, id, mid), Message.class);
-        //Falta só este
-
-
-        return response.getBody();
+        if(response.getBody().getReceivedDate() == null)
+            return "Unread";
+        return "readed";
     }
 
     /* Auxiliary Methods ------------------------------------------------------------------- */

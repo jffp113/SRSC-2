@@ -105,15 +105,24 @@ public class Message {
     @Override
     public String toString() {
         return String.format("\n" +
-                        "id=%s \n" +
-                        "   from=%s \n" +
-                        "   to=%s \n" +
-                        "   messageFrom=%s \n" +
-                        "   messageTo=%s \n" +
-                        "   sendDate=%s \n"+
-                        "   receivedDate=%s \n" +
-                        "   signature=%s \n" +
-                        "   parameters=%s \n",
+                        "mid= %s \n" +
+                        "   from= %s \n" +
+                        "   to= %s \n" +
+                        "   messageFrom= %s \n" +
+                        "   messageTo= %s \n" +
+                        "   sendDate= %s \n"+
+                        "   receivedDate= %s \n" +
+                        "   signature= %s \n" +
+                        "   parameters= %s \n",
+                id, from, to, messageFrom, messageTo, sendDate, receivedDate, signature, parameters);
+    }
+
+    public String toString2() {
+        return String.format("\n" +
+                        "mid= %s \n" +
+                        "   from= %s \n" +
+                        "   messageTo= %s \n" +
+                        "   sendDate= %s \n"+
                 id, from, to, messageFrom, messageTo, sendDate, receivedDate, signature, parameters);
     }
 

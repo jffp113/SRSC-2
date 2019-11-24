@@ -11,9 +11,9 @@ public interface Client {
     List<User> list();
     List<Message> newMessages(Long id);
     List<Message> all(Long id);
-    List<Long> send(Long to, String message) throws Exception;
+    String send(Long to, String message) throws Exception;
     Message recv(Long id, Long mid);
     void receipt(Long mid) throws Exception;
-    Message status(Long id, Long mid);
+    String status(Long id, Long mid);
 
 }

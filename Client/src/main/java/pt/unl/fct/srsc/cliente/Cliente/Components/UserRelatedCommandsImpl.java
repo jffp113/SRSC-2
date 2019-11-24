@@ -85,7 +85,7 @@ public class UserRelatedCommandsImpl {
             client.receipt(mid);
         } catch (Exception e) {
             e.printStackTrace();
-           return "Not receipted";
+            return "Not receipted";
         }
         return "Receipted";
     }
@@ -95,7 +95,7 @@ public class UserRelatedCommandsImpl {
             @ShellOption() Long id,
             @ShellOption() Long mid)
     {
-        return client.status(id, mid).toString();
+        return client.status(id, mid);
     }
 
 
