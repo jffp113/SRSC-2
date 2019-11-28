@@ -14,9 +14,13 @@ import pt.unl.fct.srsc.cliente.Cliente.Security.CertificateUtil;
 import pt.unl.fct.srsc.cliente.Cliente.Security.Signer;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.B64;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.HASH;
+import pt.unl.fct.srsc.cliente.Cliente.Utils.SSLUtil;
 
 
 import javax.annotation.PostConstruct;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,7 +58,9 @@ public class ClientImpl implements Client {
     private Signer signer;
 
     @Autowired
-    public ClientImpl(RestTemplateBuilder restTemplateBuilder) {
+    public ClientImpl(RestTemplateBuilder restTemplateBuilder) throws Exception{
+
+        SSLUtil.changeDefaultCertificateValidation();
         restTemplate = restTemplateBuilder
                 .errorHandler(new RestTemplateResponseErrorHandler())
                 .build();

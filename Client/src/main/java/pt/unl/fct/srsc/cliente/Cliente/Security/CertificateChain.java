@@ -1,5 +1,6 @@
 package pt.unl.fct.srsc.cliente.Cliente.Security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -27,6 +28,7 @@ public class CertificateChain extends Certificate {
     private List<Certificate> certChain;
     private Set<X509Certificate> trustCertificastes;
     private KeyStore truststore;
+
 
     public CertificateChain(List<Certificate> certChain) throws KeyStoreException {
         super("CertificateChain");
