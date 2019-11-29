@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +15,6 @@ import pt.unl.fct.srsc.cliente.Cliente.Security.CertificateUtil;
 import pt.unl.fct.srsc.cliente.Cliente.Security.Signer;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.B64;
 import pt.unl.fct.srsc.cliente.Cliente.Utils.HASH;
-import pt.unl.fct.srsc.cliente.Cliente.Utils.SSLUtil;
 
 
 import javax.annotation.PostConstruct;
@@ -57,10 +57,24 @@ public class ClientImpl implements Client {
     @Autowired
     private Signer signer;
 
-    @Autowired
-    public ClientImpl(RestTemplateBuilder restTemplateBuilder) throws Exception{
+    static {
+        //for localhost testing only
+        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
+                new javax.net.ssl.HostnameVerifier(){
 
-        SSLUtil.changeDefaultCertificateValidation();
+                    public boolean verify(String hostname,
+                                          javax.net.ssl.SSLSession sslSession) {
+                        return true;
+                    }
+                });
+    }
+
+
+    @Autowired
+    public ClientImpl(RestTemplateBuilder restTemplateBuilder,Environment env) throws Exception{
+        System.setProperty("javax.net.ssl.trustStore", env.getProperty("client.ssl.trust-store"));
+        System.setProperty("javax.net.ssl.trustStorePassword",env.getProperty("client.ssl.trust-store-password"));
+        //SSLUtil.changeDefaultCertificateValidation();
         restTemplate = restTemplateBuilder
                 .errorHandler(new RestTemplateResponseErrorHandler())
                 .build();
